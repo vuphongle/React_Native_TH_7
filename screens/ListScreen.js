@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,23 +9,30 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons"; // Sử dụng các icon từ thư viện
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 export default function ListScreen() {
-  const navigation = useNavigation(); // Sử dụng hook để truy cập navigation
-  const [tasks, setTasks] = useState([
-    { id: "1", title: "Task 1" },
-    { id: "2", title: "Task 2" },
-    { id: "3", title: "Task 3" },
-    { id: "4", title: "Task 4" },
-    { id: "5", title: "Task 5" },
-    { id: "6", title: "Task 6" },
-    { id: "7", title: "Task 7" },
-    { id: "8", title: "Task 8" },
-    { id: "9", title: "Task 9" },
-    { id: "10", title: "Task 10" },
-    // Thêm nhiều task nếu cần
-  ]);
+  const navigation = useNavigation(); 
+  const [tasks, setTasks] = useState([]);
+
+  const API_URL = "https://6707f41d8e86a8d9e42d968b.mockapi.io/TH7";
+
+  const fetchTasks = async (url) => {
+    try {
+      const response = await axios.get(url);
+      setTasks(response.data);
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong!");
+      console.error(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks(API_URL);
+    }, [])
+  );
 
   // Hàm xóa task
   const deleteTask = (id) => {
