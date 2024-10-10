@@ -44,9 +44,15 @@ export default function ListScreen() {
         {
           text: "Xóa",
           style: "destructive",
-          onPress: () => {
-            setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-          },
+          onPress: async () => {
+            try {
+              await axios.delete(`${API_URL}/${id}`)
+              setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+            } catch (error) {
+              Alert.alert("Lỗi", "Xảy ra lỗi khi xóa!");
+              console.error(error);
+            }
+          }
         },
       ],
       { cancelable: true }
